@@ -1,0 +1,8 @@
+node_modules
+*.log
+.vscode
+src/**/*.test.*
+src/setupTests.js
+public/mockServiceWorker.js
+coverage
+README.md
