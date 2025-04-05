@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { toast } from "react-toastify";
+import api from "../api/axios"; // използваме api клиента
 
 export default function ExperimentForm({ onSuccess }) {
   const initialFormData = {
@@ -71,19 +71,18 @@ export default function ExperimentForm({ onSuccess }) {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    axios.post("http://localhost:8000/api/experiments/", formData)
-      .then(res => {
-        toast.success("✅ Experiment created successfully!");
-        onSuccess();
-        setFormData(initialFormData);
-        setStep(0);
-      })
-      .catch(err => {
-        console.error("Error:", err);
-        toast.error("❌ Failed to create experiment!");
-      });
+    try {
+      await api.post("/", formData); // използваме api клиента
+      toast.success("✅ Experiment created successfully!");
+      onSuccess && onSuccess(); // извикай callback ако е подаден
+      setFormData(initialFormData);
+      setStep(0);
+    } catch (error) {
+      console.error("Error:", error.response?.data || error.message);
+      toast.error("❌ Failed to create experiment!");
+    }
   };
 
   const currentStep = steps[step];
